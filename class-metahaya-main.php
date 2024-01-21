@@ -264,7 +264,7 @@ class Metahaya_Main {
 	/**
 	 * Plugin Uninstall site.
 	 *
-	 * @since 1.8.0
+	 * @since 1.0.0
 	 *
 	 * @return void
 	 */

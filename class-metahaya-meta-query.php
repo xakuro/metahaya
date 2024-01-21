@@ -383,7 +383,7 @@ class Metahaya_Meta_Query {
 		if ( false === $alias ) {
 			$alias = $this->meta_table;
 
-			$join .= " LEFT JOIN $this->meta_table";
+			$join .= " INNER JOIN $this->meta_table";
 			$join .= " AS $alias";
 			$join .= " ON ( $this->primary_table.$this->primary_id_column = $alias.$this->meta_id_column )";
 
