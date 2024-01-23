@@ -9,7 +9,7 @@
  * @wordpress-plugin
  * Plugin Name:       Metahaya
  * Plugin URI:        https://xakuro.com/wordpress/
- * Description:       Custom fields search acceleration plugin for WordPress.
+ * Description:       Custom fields search acceleration plugin.
  * Version:           1.0.0-alpha-1
  * Requires at least: 5.5
  * Requires PHP:      7.4

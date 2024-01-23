@@ -1,0 +1,39 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Metahaya 1.0.0-alpha-1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/metahaya\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-01-22T06:46:51+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Language: \n"
+"X-Generator: WP-CLI 2.9.0\n"
+"X-Domain: metahaya\n"
+
+#. Plugin Name of the plugin
+#: class-metahaya-main.php:65
+msgid "Metahaya"
+msgstr "Metahaya"
+
+#. Plugin URI of the plugin
+msgid "https://xakuro.com/wordpress/"
+msgstr "https://xakuro.com/wordpress/"
+
+#. Author of the plugin
+msgid "Xakuro"
+msgstr "Xakuro"
+
+#. Author URI of the plugin
+msgid "https://xakuro.com/"
+msgstr "https://xakuro.com/"
+
+#: class-metahaya-main.php:66
+msgid "Requires MySQL 5.7.22 or later, or MariaDB 10.5 or later."
+msgstr "MySQL 5.7.22以上、または MariaDB 10.5以上が必要です。"
+
+#. Description of the plugin
+msgid "Custom fields search acceleration plugin."
+msgstr "カスタムフィールド検索高速化プラグイン。"

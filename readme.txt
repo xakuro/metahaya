@@ -8,11 +8,11 @@ Stable tag: 1.0.0-alpha-1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Custom fields search acceleration plugin for WordPress.
+Custom fields search acceleration plugin.
 
 == Description ==
 
-Custom fields search acceleration plugin for WordPress.
+This plugin aims to speed up the search of custom fields.
 
 = Operating environment =
 

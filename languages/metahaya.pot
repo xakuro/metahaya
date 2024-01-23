@@ -1,0 +1,40 @@
+# Copyright (C) 2024 Xakuro
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Metahaya 1.0.0-alpha-1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/metahaya\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-01-23T02:23:10+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.9.0\n"
+"X-Domain: metahaya\n"
+
+#. Plugin Name of the plugin
+#: class-metahaya-main.php:65
+msgid "Metahaya"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://xakuro.com/wordpress/"
+msgstr ""
+
+#. Description of the plugin
+msgid "Custom fields search acceleration plugin."
+msgstr ""
+
+#. Author of the plugin
+msgid "Xakuro"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://xakuro.com/"
+msgstr ""
+
+#: class-metahaya-main.php:66
+msgid "Requires MySQL 5.7.22 or later, or MariaDB 10.5 or later."
+msgstr ""
