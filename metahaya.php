@@ -10,7 +10,7 @@
  * Plugin Name:       Metahaya
  * Plugin URI:        https://xakuro.com/wordpress/
  * Description:       Custom fields search acceleration plugin.
- * Version:           1.0.0-alpha-1
+ * Version:           1.0.0-beta1
  * Requires at least: 5.5
  * Requires PHP:      7.4
  * Author:            Xakuro
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'METAHAYA_VERSION', '1.0.0-alpha-1' );
+define( 'METAHAYA_VERSION', '1.0.0-beta1' );
 
 require_once __DIR__ . '/class-metahaya-main.php';
 require_once __DIR__ . '/class-metahaya-meta-query.php';
