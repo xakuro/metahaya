@@ -97,7 +97,7 @@ class Metahaya_Main {
 		$sql =
 			"CREATE TABLE {$wpdb->prefix}metahaya_postmeta (
 			post_id bigint(20) unsigned NOT NULL default 0,
-			json JSON,
+			json JSON NOT NULL,
 			PRIMARY KEY (post_id)
 			) {$charset_collate};";
 
@@ -116,50 +116,55 @@ class Metahaya_Main {
 		global $wpdb;
 
 		$sql =
-			'CREATE TRIGGER ' . $wpdb->prefix . 'metahaya_insert_post AFTER
-			INSERT ON ' . $wpdb->prefix . 'posts
-			FOR EACH ROW
-			INSERT INTO ' . $wpdb->prefix . 'metahaya_postmeta (post_id, json) VALUES (NEW.ID, "{}" );';
+			"CREATE TRIGGER {$wpdb->prefix}metahaya_insert_post AFTER " .
+			"INSERT ON {$wpdb->prefix}posts " .
+			'FOR EACH ROW ' .
+			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json) VALUES (NEW.ID, '{}' );";
+
 		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
 		$sql =
-			'CREATE TRIGGER ' . $wpdb->prefix . 'metahaya_delete_post BEFORE
-			DELETE ON ' . $wpdb->prefix . 'posts
-			FOR EACH ROW
-			DELETE FROM ' . $wpdb->prefix . 'metahaya_postmeta WHERE post_id = OLD.ID;';
+			"CREATE TRIGGER {$wpdb->prefix}metahaya_delete_post BEFORE " .
+			"DELETE ON {$wpdb->prefix}posts " .
+			'FOR EACH ROW ' .
+			"DELETE FROM {$wpdb->prefix}metahaya_postmeta WHERE post_id = OLD.ID;";
+
 		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
 		$sql =
-			'CREATE TRIGGER ' . $wpdb->prefix . 'metahaya_insert_postmeta AFTER
-			INSERT ON ' . $wpdb->prefix . 'postmeta
-			FOR EACH ROW
-			UPDATE ' . $wpdb->prefix . 'metahaya_postmeta SET `json` = JSON_SET (`json`, CONCAT ("$.",NEW.meta_key), NEW.meta_value) WHERE post_id = NEW.post_id;';
+			"CREATE TRIGGER {$wpdb->prefix}metahaya_insert_postmeta AFTER " .
+			"INSERT ON {$wpdb->prefix}postmeta " .
+			'FOR EACH ROW ' .
+			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_SET(`json`, CONCAT('$.\"', NEW.meta_key, '\"'), NEW.meta_value) WHERE post_id = NEW.post_id;";
+
 		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
 		$sql =
-			'CREATE TRIGGER ' . $wpdb->prefix . 'metahaya_update_postmeta AFTER
-			UPDATE ON ' . $wpdb->prefix . 'postmeta
-			FOR EACH ROW
-			UPDATE ' . $wpdb->prefix . 'metahaya_postmeta SET `json` = JSON_SET (`json`, CONCAT ("$.",NEW.meta_key), NEW.meta_value) WHERE post_id = NEW.post_id;';
+			"CREATE TRIGGER {$wpdb->prefix}metahaya_update_postmeta AFTER " .
+			"UPDATE ON {$wpdb->prefix}postmeta " .
+			'FOR EACH ROW ' .
+			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_SET(`json`, CONCAT('$.\"', NEW.meta_key, '\"'), NEW.meta_value) WHERE post_id = NEW.post_id;";
+
 		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
 		$sql =
-			'CREATE TRIGGER ' . $wpdb->prefix . 'metahaya_delete_postmeta AFTER
-			DELETE ON ' . $wpdb->prefix . 'postmeta
-			FOR EACH ROW
-			UPDATE ' . $wpdb->prefix . 'metahaya_postmeta SET `json` = JSON_REMOVE (`json`, CONCAT ("$.",OLD.meta_key)) WHERE post_id = OLD.post_id;';
+			"CREATE TRIGGER {$wpdb->prefix}metahaya_delete_postmeta AFTER " .
+			"DELETE ON {$wpdb->prefix}postmeta " .
+			'FOR EACH ROW ' .
+			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_REMOVE(`json`, CONCAT('$.\"', OLD.meta_key, '\"')) WHERE post_id = OLD.post_id;";
+
 		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		if ( $wpdb->last_error ) {
 			return false;

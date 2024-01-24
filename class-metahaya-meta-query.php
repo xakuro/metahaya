@@ -1,13 +1,13 @@
 <?php
 /**
- * Metahaya: Metahaya_Meta_Query class
+ * Metahaya_Meta_Query class
  *
  * @package Metahaya
  * @since 1.0.0
  */
 
 /**
- * Metahaya_Meta_Query class.
+ * Metahaya Meta Query class.
  *
  * See WP_Meta_Query class.
  *
