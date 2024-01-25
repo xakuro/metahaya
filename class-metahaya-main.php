@@ -121,7 +121,7 @@ class Metahaya_Main {
 			"CREATE TRIGGER {$wpdb->prefix}metahaya_insert_post AFTER " .
 			"INSERT ON {$wpdb->prefix}posts " .
 			'FOR EACH ROW ' .
-			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json) VALUES (NEW.ID, '{}');"
+			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json) VALUES (NEW.ID, JSON_OBJECT());"
 		);
 		if ( $wpdb->last_error ) {
 			return false;
@@ -202,6 +202,12 @@ class Metahaya_Main {
 	 */
 	public function update_table() {
 		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json) " .
+			"SELECT {$wpdb->prefix}posts.ID, JSON_OBJECT() FROM {$wpdb->prefix}posts;"
+		);
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
 		$wpdb->query(
