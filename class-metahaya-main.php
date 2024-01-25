@@ -97,7 +97,7 @@ class Metahaya_Main {
 		$sql =
 			"CREATE TABLE {$wpdb->prefix}metahaya_postmeta (
 			post_id bigint(20) unsigned NOT NULL default 0,
-			json JSON NOT NULL,
+			json JSON,
 			PRIMARY KEY (post_id)
 			) {$charset_collate};";
 
@@ -115,57 +115,62 @@ class Metahaya_Main {
 	public function create_trigger() {
 		global $wpdb;
 
-		$sql =
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
 			"CREATE TRIGGER {$wpdb->prefix}metahaya_insert_post AFTER " .
 			"INSERT ON {$wpdb->prefix}posts " .
 			'FOR EACH ROW ' .
-			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json) VALUES (NEW.ID, '{}' );";
-
-		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json) VALUES (NEW.ID, '{}');"
+		);
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
-		$sql =
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
 			"CREATE TRIGGER {$wpdb->prefix}metahaya_delete_post BEFORE " .
 			"DELETE ON {$wpdb->prefix}posts " .
 			'FOR EACH ROW ' .
-			"DELETE FROM {$wpdb->prefix}metahaya_postmeta WHERE post_id = OLD.ID;";
-
-		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+			"DELETE FROM {$wpdb->prefix}metahaya_postmeta WHERE post_id = OLD.ID;"
+		);
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
-		$sql =
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
 			"CREATE TRIGGER {$wpdb->prefix}metahaya_insert_postmeta AFTER " .
 			"INSERT ON {$wpdb->prefix}postmeta " .
 			'FOR EACH ROW ' .
-			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_SET(`json`, CONCAT('$.\"', NEW.meta_key, '\"'), NEW.meta_value) WHERE post_id = NEW.post_id;";
-
-		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_SET(`json`, CONCAT('$.\"', NEW.meta_key, '\"'), NEW.meta_value) WHERE post_id = NEW.post_id;"
+		);
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
-		$sql =
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
 			"CREATE TRIGGER {$wpdb->prefix}metahaya_update_postmeta AFTER " .
 			"UPDATE ON {$wpdb->prefix}postmeta " .
 			'FOR EACH ROW ' .
-			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_SET(`json`, CONCAT('$.\"', NEW.meta_key, '\"'), NEW.meta_value) WHERE post_id = NEW.post_id;";
-
-		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_SET(`json`, CONCAT('$.\"', NEW.meta_key, '\"'), NEW.meta_value) WHERE post_id = NEW.post_id;"
+		);
 		if ( $wpdb->last_error ) {
 			return false;
 		}
 
-		$sql =
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange
 			"CREATE TRIGGER {$wpdb->prefix}metahaya_delete_postmeta AFTER " .
 			"DELETE ON {$wpdb->prefix}postmeta " .
 			'FOR EACH ROW ' .
-			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_REMOVE(`json`, CONCAT('$.\"', OLD.meta_key, '\"')) WHERE post_id = OLD.post_id;";
-
-		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+			"UPDATE {$wpdb->prefix}metahaya_postmeta SET `json` = JSON_REMOVE(`json`, CONCAT('$.\"', OLD.meta_key, '\"')) WHERE post_id = OLD.post_id;"
+		);
 		if ( $wpdb->last_error ) {
 			return false;
 		}
@@ -198,18 +203,18 @@ class Metahaya_Main {
 	public function update_table() {
 		global $wpdb;
 
-		$sql =
-			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json)
-			SELECT post_id, JSON_OBJECTAGG(meta_key, meta_value) AS json FROM {$wpdb->prefix}postmeta GROUP BY post_id
-			ON DUPLICATE KEY UPDATE json = VALUES(json)";
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			"INSERT INTO {$wpdb->prefix}metahaya_postmeta (post_id, json) " .
+			"SELECT post_id, JSON_OBJECTAGG(meta_key, meta_value) AS json FROM {$wpdb->prefix}postmeta GROUP BY post_id " .
+			'ON DUPLICATE KEY UPDATE json = VALUES(json)'
+		);
 
-		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
-
-		$sql =
-			"DELETE FROM {$wpdb->prefix}metahaya_postmeta
-			WHERE {$wpdb->prefix}metahaya_postmeta.post_id NOT IN (SELECT ID FROM {$wpdb->prefix}posts)";
-
-		$wpdb->query( $sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+		$wpdb->query(
+			"DELETE FROM {$wpdb->prefix}metahaya_postmeta " .
+			"WHERE {$wpdb->prefix}metahaya_postmeta.post_id NOT IN (SELECT ID FROM {$wpdb->prefix}posts)"
+		);
 	}
 
 	/**
@@ -369,27 +374,7 @@ class Metahaya_Main {
 			$order = explode( ' ', $value );
 			$order = in_array( 'DESC', $order, true ) ? $order[ array_search( 'DESC', $order, true ) ] : $order[ array_search( 'ASC', $order, true ) ];
 
-			if ( strpos( $value, 'mt' ) ) {
-				$meta_clause     = array();
-				$meta_clause_key = '';
-				foreach ( $meta_clauses_keys as $meta_clauses_key ) {
-					if ( strpos( $value, $meta_clauses[ $meta_clauses_key ]['alias'] ) ) {
-						$meta_clause     = $meta_clauses[ $meta_clauses_key ];
-						$meta_clause_key = $meta_clauses_key;
-					}
-				}
-
-				$meta_key = $meta_clause['key'];
-				if ( preg_match( '/^[a-zA-Z0-9_]+$/', $meta_key ) ) {
-					$meta_key = '$.' . $meta_key;
-				} else {
-					$meta_key = '$."' . $meta_key . '"';
-				}
-
-				if ( in_array( $meta_clause_key, $orderby_vars, true ) ) {
-					$orderby_array[ $key ] = "JSON_EXTRACT($alias.json, '$meta_key') $order";
-				}
-			} elseif ( strpos( $value, 'meta_value' ) ) {
+			if ( strpos( $value, 'meta_value' ) ) {
 				$meta_clause = array();
 				foreach ( $meta_clauses_keys as $meta_clauses_key ) {
 					if ( false !== strpos( $value, $meta_clauses[ $meta_clauses_key ]['alias'] ) ) {

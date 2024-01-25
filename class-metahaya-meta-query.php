@@ -65,14 +65,6 @@ class Metahaya_Meta_Query {
 	public $primary_id_column;
 
 	/**
-	 * A flat list of table aliases used in JOIN clauses.
-	 *
-	 * @since 1.0.0
-	 * @var array
-	 */
-	protected $table_aliases = array();
-
-	/**
 	 * A flat list of clauses, keyed by clause 'name'.
 	 *
 	 * @since 1.0.0
@@ -156,8 +148,6 @@ class Metahaya_Meta_Query {
 			return false;
 		}
 
-		$this->table_aliases = array();
-
 		$this->meta_table     = $meta_table;
 		$this->meta_id_column = sanitize_key( $type . '_id' );
 
@@ -188,6 +178,9 @@ class Metahaya_Meta_Query {
 		if ( ! empty( $sql['where'] ) ) {
 			$sql['where'] = ' AND ' . $sql['where'];
 		}
+
+		$sql['join']  = empty( $sql['join'] ) ? ' INNER' : ' LEFT';
+		$sql['join'] .= " JOIN {$this->meta_table} ON {$this->primary_table}.{$this->primary_id_column} = {$this->meta_table}.{$this->meta_id_column}";
 
 		return $sql;
 	}
@@ -383,12 +376,11 @@ class Metahaya_Meta_Query {
 		if ( false === $alias ) {
 			$alias = $this->meta_table;
 
-			$join .= " INNER JOIN $this->meta_table";
-			$join .= " AS $alias";
-			$join .= " ON ( $this->primary_table.$this->primary_id_column = $alias.$this->meta_id_column )";
+			if ( 'NOT EXISTS' === $meta_compare ) {
+				$join = 'LEFT';
+			}
 
-			$this->table_aliases[] = $alias;
-			$sql_chunks['join'][]  = $join;
+			$sql_chunks['join'][] = $join;
 		}
 
 		// Save the alias to this clause, for future siblings to find.
@@ -417,14 +409,20 @@ class Metahaya_Meta_Query {
 
 		// Next, build the WHERE clause.
 
+		if ( ! array_key_exists( 'value', $clause ) ) {
+			if ( '=' === $meta_compare ) {
+				$meta_compare = 'EXISTS';
+			}
+		}
+
 		// meta_key.
 		if ( array_key_exists( 'key', $clause ) ) {
 			if ( 'NOT EXISTS' === $meta_compare ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$sql_chunks['where'][] = $wpdb->prepare( "(!JSON_CONTAINS_PATH($alias.json, 'one', %s) OR $alias.json IS NULL)", $meta_key );
+				$sql_chunks['where'][] = $wpdb->prepare( "!JSON_CONTAINS_PATH({$alias}.json, 'one', %s) OR {$alias}.json IS NULL", $meta_key );
 			} elseif ( 'EXISTS' === $meta_compare && ! array_key_exists( 'value', $clause ) ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$sql_chunks['where'][] = $wpdb->prepare( "JSON_CONTAINS_PATH($alias.json, 'one', %s)", $meta_key );
+				$sql_chunks['where'][] = $wpdb->prepare( "JSON_CONTAINS_PATH({$alias}.json, 'one', %s)", $meta_key );
 			}
 		}
 
@@ -476,10 +474,10 @@ class Metahaya_Meta_Query {
 			if ( $where ) {
 				if ( 'CHAR' === $meta_type ) {
 					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					$column = $wpdb->prepare( "JSON_UNQUOTE(JSON_EXTRACT($alias.json, %s))", $meta_key );
+					$column = $wpdb->prepare( "JSON_UNQUOTE(JSON_EXTRACT({$alias}.json, %s))", $meta_key );
 				} else {
 					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					$column = $wpdb->prepare( "CAST(JSON_UNQUOTE(JSON_EXTRACT($alias.json, %s)) AS $meta_type)", $meta_key );
+					$column = $wpdb->prepare( "CAST(JSON_UNQUOTE(JSON_EXTRACT({$alias}.json, %s)) AS $meta_type)", $meta_key );
 				}
 				$sql_chunks['where'][] = "{$column} {$meta_compare} {$where}";
 			}
