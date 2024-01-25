@@ -419,7 +419,7 @@ class Metahaya_Meta_Query {
 		if ( array_key_exists( 'key', $clause ) ) {
 			if ( 'NOT EXISTS' === $meta_compare ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$sql_chunks['where'][] = $wpdb->prepare( "!JSON_CONTAINS_PATH({$alias}.json, 'one', %s) OR {$alias}.json IS NULL", $meta_key );
+				$sql_chunks['where'][] = $wpdb->prepare( "(!JSON_CONTAINS_PATH({$alias}.json, 'one', %s) OR {$alias}.json IS NULL)", $meta_key );
 			} elseif ( 'EXISTS' === $meta_compare && ! array_key_exists( 'value', $clause ) ) {
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				$sql_chunks['where'][] = $wpdb->prepare( "JSON_CONTAINS_PATH({$alias}.json, 'one', %s)", $meta_key );
